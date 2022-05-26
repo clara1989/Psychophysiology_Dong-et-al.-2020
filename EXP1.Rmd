@@ -1,0 +1,83 @@
+---
+title: "EXP1"
+author: "xiaofei dong"
+date: "3/28/2022"
+output: html_document
+---
+
+```{r}
+####### load data #######
+library(readr)
+library("readxl")
+library("tidyverse")
+
+EXP1_data<- read.csv("/Users/xiaofeidong/Desktop/EXP1_Behavioral.csv")
+
+EXP1_data_long<-EXP1_data%>%gather('HA','HD','HF','HN','LA','LD','LF','LN',key= Valence, value=Reaction_time)%>%mutate(spatial_frequency = Valence)
+
+EXP1_data_long<-EXP1_data_long%>%mutate(Valence=case_when(
+  Valence == 'HA' ~ "Angry",
+  Valence == 'LA' ~ "Angry",  
+  Valence == 'HD' ~ "Disgust",
+  Valence == 'LD' ~ "Disgust", 
+  Valence == 'HF' ~ "Fear",
+  Valence == 'LF' ~ "Fear",  
+  Valence == 'HN' ~ "Neutral",
+  Valence == 'LN' ~ "Neutral", 
+  ))
+
+EXP1_data_long<-EXP1_data_long%>%mutate(spatial_frequency=case_when(
+  spatial_frequency == 'HA' ~ "High spatial frequency",
+  spatial_frequency == 'LA' ~ "Low spatial frequency",  
+  spatial_frequency == 'HD' ~ "High spatial frequency",
+  spatial_frequency == 'LD' ~ "Low spatial frequency", 
+  spatial_frequency == 'HF' ~ "High spatial frequency",
+  spatial_frequency == 'LF' ~ "Low spatial frequency",  
+  spatial_frequency == 'HN' ~ "High spatial frequency",
+  spatial_frequency == 'LN' ~ "Low spatial frequency", 
+  ))
+EXP1_data_long<-EXP1_data_long%>%mutate(group=case_when(
+  group == '1' ~ "HSA",
+  group == '2' ~ "LSA",
+    ))
+write.csv(EXP1_data_long,"/Users/xiaofeidong/Desktop/EXP1_data_long.csv")
+
+```
+
+```{r}
+library(ggplot2)
+library(tidyverse)     ## data wrangling + ggplot2
+library(ggdist)        ## halfeye plots
+library(gghalves)      ## off-set jitter
+library(colorspace)    ## adjust colors
+library(rcartocolor)   ## Carto palettes
+
+#g1<-EXP1_data_long %>% group_by(subject, Valence, spatial_frequency) %>% summarise(mean=mean(Recognition))
+
+  
+#g1 <- g1 %>%mutate(TaskCon = recode(TaskCon, "Dual" = "DUAL", "PicOnly" = "PIC"))
+ gg<- ggplot(EXP1_data_long, aes(y=Reaction_time, x=Valence,color=Valence)) +#labs(color = "Valence")+
+  ggbeeswarm::geom_quasirandom(alpha = 0.5,width=.2,dodge.width=1) +
+  geom_boxplot(fill = "transparent",position=position_dodge(0.9),width=.2 ) +
+  stat_summary(colour = "red") +
+  #facet_grid(cols = vars(group),rows= vars(spatial_frequency))+
+   facet_grid(cols = vars(spatial_frequency))+
+  #ylim(0, max(EXP1_data_long$Reaction_time))+
+   ylim(500, 800)+
+  #ggtitle("A. Picture recognition accuracy")+
+  xlab(label = "") +
+  ylab(label = "Reaction time(ms)")+
+  theme_bw() +
+  #theme_grey() +
+  theme(text=element_text(family="Times New Roman", face="bold", size=10))
+
+gg
+ggsave("Reaction_time1.tiff",gg, path = "/Users/xiaofeidong/Desktop/",units="in", width=6, height=4, dpi=600, compression = 'lzw')
+
+```
+
+
+
+
+
+
