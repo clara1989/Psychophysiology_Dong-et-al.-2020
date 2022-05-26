@@ -1,0 +1,17 @@
+clc;
+pics = dir('/Users/xiaofeidong/Desktop/In_File/*.jpg');
+num_pics = length( pics );
+ for i = 1 : num_pics   
+pic_file = fullfile( '/Users/xiaofeidong/Desktop/In_File/',pics(i).name );
+pic   = imread( pic_file );
+% ????????? pgm_file ,???pgm_file ????+???+???
+%[ path , name , ext ] = fileparts( bmp_file ) ;
+
+ x = imresize(pic,[360,480]);
+  % ???????????
+  filename = num2str(i,'%05i.jpg');
+  % ??????????
+   jpg_file = fullfile( '/Users/xiaofeidong/Desktop/Out_File/' , filename ) ;
+  % ????? pgm ? jpg_file ????????? jpg ??.
+  imwrite( x , jpg_file , 'jpg' );
+ end
