@@ -1,0 +1,36 @@
+---
+title: "bar_plot"
+author: "xiaofei dong"
+date: "03/02/2020"
+output: html_document
+---
+
+```{r}
+
+library("readxl")
+library("mlmRev")
+library("emmeans")
+library("afex")
+library("multcomp")
+p <- read.csv("/Users/xiaofeidong/group_emotion2.csv")
+p$group <- as.factor(p$group)
+p$valence <- as.factor(p$valence)
+p$amplitude <-as.double(p$amplitude)
+
+library(ggplot2)
+library(dplyr)
+p_summary <- p %>% group_by(group,valence) %>% summarise(mean=mean(amplitude))
+
+p_summary <- p %>% group_by(group, valence) %>% summarise(amplitude_mean=mean(amplitude),n = n(),sd=sd(amplitude),se = sd(amplitude)/sqrt(n()))
+
+#write.csv(p_summary,"/Users/xiaofeidong/p_summary.csv")
+
+
+
+
+ggplot(p_summary, aes(y=amplitude_mean, x=group, fill=valence)) + geom_bar(position="dodge", stat="identity")+geom_errorbar(aes(ymin = amplitude_mean - se, ymax = amplitude_mean + se), position=position_dodge(0.9),width=.2)
+
+
+
+
+```
